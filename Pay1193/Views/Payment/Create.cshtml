@@ -1,0 +1,144 @@
+﻿@model PaymentRecordCreateViewModel
+@{
+    var emps = ViewBag.employees;
+    var years = ViewBag.taxYears;
+    string[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "Octocber", "November", "December" };
+}
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Payment" asp-action="Index">Payroll List</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Payroll Computation</li>
+                </ol>
+            </nav><br />
+            <form method="post" asp-controller="Payment" asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="EmployeeId">Full Name</label>
+                        <select asp-for="EmployeeId" class="form-control" placeholder="-- Select Employee --">
+                            @foreach (var item in emps)
+                            {
+                                <option value="@item.Id">@item.FullName</option>
+                            }
+
+                        </select>
+                        <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-1">
+                        <label asp-for="PayMonth"></label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <select asp-for="PayMonth" class="form-control" placeholder="-- Select Month --">
+                            @foreach (var item in months)
+                            {
+                                <option value="@item">@item</option>
+                            }
+
+                        </select>
+                        <span asp-validation-for="PayMonth" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label asp-for="TaxYearId">Tax Year</label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <select asp-for="TaxYearId" class="form-control" placeholder="-- Select Tax Year --">
+                            @foreach (var item in years)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+
+                        </select>
+                        <span asp-validation-for="TaxYearId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label asp-for="PayDate"></label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input type="date" class="form-control" asp-for="PayDate" />
+                        <span asp-validation-for="PayDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-1">
+                        <label asp-for="HourlyRate"></label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input type="text" id="HourlyRate" class="form-control" asp-for="HourlyRate" />
+                        <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-1">
+                        <label asp-for="HourlyWorked"></label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input type="text" class="form-control" asp-for="HourlyWorked" />
+                        <span asp-validation-for="HourlyWorked" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-1">
+                        <label asp-for="ContractualHours"></label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input type="text" class="form-control" asp-for="ContractualHours" />
+                        <span asp-validation-for="ContractualHours" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-secondary btn-rounded float-left" style="margin-right:auto.7em">Compute & Save</button>
+                    <a asp-controller="Payment" asp-action="Index" class="btn btn-success btn-rounded float-right ms-auto" style="margin-right:auto.7em">Back to Pay List</a>
+                    <br />
+                    <br />
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_validationScriptsPartial");
+
+
+    }
+    }
+                    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById("HourlyRate").onblur = function () {
+                this.value = parseFloat(this.value.replace(/,/g, ""))
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    .replace(/,/g, "");
+            }
+            document.getElementById("HourlyWorked").onblur = function () {
+                this.value = parseFloat(this.value.replace(/,/g, ""))
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    .replace(/,/g, "");
+            }
+            document.getElementById("ContractualHours").onblur = function () {
+                this.value = parseFloat(this.value.replace(/,/g, ""))
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    .replace(/,/g, "");
+            }
+        })
+
+    </script>

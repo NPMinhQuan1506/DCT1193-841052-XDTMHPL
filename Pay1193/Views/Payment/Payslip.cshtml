@@ -1,0 +1,170 @@
+﻿@model PaymentRecordDetailViewModel
+
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payroll - Pay1193</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Pay1193.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" />*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+<body>
+
+    <div class="container-scroller">
+        <div class="">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row html-content">
+                        <div class="d-flex mt-3">
+                            <div class="ms-3">
+                                <h6 class="font-weight-bold">Paycompute Ltd</h6>
+                                <p>@Model.Employee?.Address</p>
+                                <p>@Model.Employee?.City</p>
+                                <p>W1C 2XB</p>
+                            </div>
+                            <div class="ms-auto">
+                                <h6 class="font-weight-bold">Pay date: @Model.PayDate</h6>
+                                <p>Tax Code: @Model.TaxCode</p>
+                                <p>Year: @Model.Year</p>
+                                <p>HMRC</p>
+                            </div>
+                        </div>
+                        <div class="mt-1">
+                            <div class="d-flex">
+                                <h5 class="font-weight-bold">
+                                    Employee's Name: @Model.FullName
+                                </h5>
+                                <h5 class="font-weight-bold ms-auto me-5">
+                                    National Insurance Number: @Model.NiNo
+                                </h5>
+                            </div>
+                            <table class="table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Earrnings</th>
+                                        <th>Hours</th>
+                                        <th>Rates</th>
+                                        <th>Amount</th>
+                                        <th>Deduction</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-weight-bold">Basic:</td>
+                                        <td> $@string.Format("{0:N2}", @Model.HourlyWorked)</td>
+                                        <td>$@string.Format("{0:N2}", @Model.HourlyRate)</td>
+                                        <td>$@string.Format("{0:N2}", @Model.TotalEarnings)</td>
+                                        <td class="font-weight-bold">Tax:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.Tax)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Overtime:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.OvertimeHours)</td>
+                                        <td>$@string.Format("{0:N2}", @Model.OvertimeRate)</td>
+                                        <td>$@string.Format("{0:N2}", @Model.OvertimeEarnings)</td>
+                                        <td class="font-weight-bold">NIC:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.NIC)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="font-weight-bold">Union:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.UnionFee)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="font-weight-bold">SLC:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.SLC)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Total:</td>
+                                        <td>$@string.Format("{0:N2}", @Model.ContractualHours)</td>
+                                        <td></td>
+                                        <td>$@string.Format("{0:N2}", @Model.TotalEarnings - Model.OvertimeEarnings)</td>
+                                        <td class="font-weight-bold"></td>
+                                        <td>$@string.Format("{0:N2}", @Model.TotalDeduction)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="font-weight-bold bg-dark text-white">Net Pay:</td>
+                                        <td class=" bg-dark text-white">$@string.Format("{0:N2}", @Model.NetPayment)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="action_Save-Content">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="PDFExport" type="button" class="btn btn-dark float-end mt-2 d-none" onclick="event.preventDefault(); CreatePDFfromHTML();">Xuất PDF</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            let isPDF = @ViewBag.IsPDF;
+            if (isPDF == 1) {
+                $("#PDFExport").removeClass('d-none');
+            }
+        })
+
+        function CreatePDFfromHTML() {
+            var HTML_Width = $(".html-content").width();
+            var HTML_Height = $(".html-content").height();
+            var top_left_margin = 15;
+            var PDF_Width = HTML_Width + (top_left_margin * 2);
+            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+
+            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+            html2canvas($(".html-content")[0]).then(function (canvas) {
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+                for (var i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+                pdf.save("Payslip.pdf");
+                swal({
+                    title: "Thông báo!",
+                    text: "Xuất PDF thành công!",
+                    type: "success"
+                }).then(function () {
+                    history.back()
+                });
+                
+            });
+        }
+
+    </script>
+</body>
+</html>
